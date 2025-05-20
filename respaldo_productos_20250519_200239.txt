@@ -1,0 +1,20 @@
+[
+    {
+        "id": 12,
+        "producto": "Laurita",
+        "precio": 100,
+        "cantidad": 2
+    },
+    {
+        "id": 14,
+        "producto": "wiskas",
+        "precio": 700,
+        "cantidad": 50
+    },
+    {
+        "id": 15,
+        "producto": "castillo de arena ",
+        "precio": 120,
+        "cantidad": 2
+    }
+]

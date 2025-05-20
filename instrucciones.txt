@@ -1,0 +1,26 @@
+archivo conexion
+-clase con metodos
+-encapsulamiento
+
+archivo proyecto
+-clase proyecto
+-crud
+-metodos publicos y privadors
+-propiedades privadas
+
+archivo login
+-clase login
+-metodos publicos y privados
+-registro
+-inicio de sesion
+-permisos de usuario
+
+base de datos 
+-tabla principal
+-tabla usuarios
+
+llenado de tabla principal
+-archivo .json con informacion
+-leer el archivo e insertar en la bd 
+-preguntaR al usuario si quiere llenar la bd
+-gererar un respaldo en un archivo .json
