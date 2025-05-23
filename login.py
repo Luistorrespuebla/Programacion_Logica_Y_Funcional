@@ -23,7 +23,7 @@ class Login:
         if datos:
             self.usuario = datos[1]
             self.rol = datos[2]
-            print(f"\n✅ Bienvenido (rol: {self.rol}) {self.usuario} \n")
+            print(f"\n Bienvenido (rol: {self.rol}) {self.usuario} \n")
             return True
         else:
             print("❌ Credenciales incorrectas.")
@@ -36,7 +36,7 @@ class Login:
                 cursor.execute("INSERT INTO t_usuarios (nombre, rol, email, pass) VALUES (%s, %s, %s, %s)",
                                (nombre, rol.lower(), email, password))
                 self.__conexion_db.get_conexion().commit()
-                print("✅ Usuario registrado exitosamente.")
+                print(" Usuario registrado exitosamente.")
             except Exception as e:
                 print(f"❌ Error al registrar: {e}")
             finally:

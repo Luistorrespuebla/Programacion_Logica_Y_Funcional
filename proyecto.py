@@ -21,9 +21,41 @@ class sistemaTienda:
                 with open(archivo, "w", encoding="utf-8") as f:
                     json.dump(lista, f, indent=4, ensure_ascii=False)
 
-                print(f"📁 Respaldo creado: {archivo}")
+                print(f" Respaldo creado: {archivo}")
             except Exception as e:
                 print(f"❌ Error al respaldar: {e}")
+            finally:
+                self.__conexion_db.desconectar(cursor)
+
+    def __restaurar_respaldo(self):
+        confirmacion = input(" Esta acción eliminará todos los productos actuales. Deseas continuar? (s/n): ").lower()
+        if confirmacion != "s":
+            print("❌ Operación cancelada.")
+            return
+
+        ruta = input(" Ingresa el nombre del archivo de respaldo (ej. respaldo_productos_20250522_152045.txt): ")
+        try:
+            with open(ruta, "r", encoding="utf-8") as f:
+                productos = json.load(f)
+        except Exception as e:
+            print(f"❌ Error al leer el archivo: {e}")
+            return
+
+        cursor = self.__conexion_db.conectar()
+        if cursor:
+            try:
+                cursor.execute("DELETE FROM t_productos")
+                self.__conexion_db.get_conexion().commit()
+
+                for prod in productos:
+                    cursor.execute(
+                        "INSERT INTO t_productos (producto, precio, cantidad) VALUES (%s, %s, %s)",
+                        (prod["producto"], prod["precio"], prod["cantidad"])
+                    )
+                self.__conexion_db.get_conexion().commit()
+                print(" Respaldo restaurado correctamente.")
+            except Exception as e:
+                print(f"❌ Error al restaurar respaldo: {e}")
             finally:
                 self.__conexion_db.desconectar(cursor)
 
@@ -33,7 +65,7 @@ class sistemaTienda:
             try:
                 cursor.execute("SELECT * FROM t_productos")
                 productos = cursor.fetchall()
-                print("\n📦 Lista de productos:")
+                print("\n Lista de productos:")
                 for p in productos:
                     print(f"ID: {p[0]}, Producto: {p[1]}, Precio: {p[2]}, Cantidad: {p[3]}")
             except Exception as e:
@@ -51,7 +83,7 @@ class sistemaTienda:
                 cursor.execute("INSERT INTO t_productos(producto, precio, cantidad) VALUES (%s, %s, %s)",
                                (nombre, precio, cantidad))
                 self.__conexion_db.get_conexion().commit()
-                print("✅ Producto agregado.")
+                print(" Producto agregado.")
             except Exception as e:
                 print(f"❌ Error al agregar producto: {e}")
             finally:
@@ -87,7 +119,7 @@ class sistemaTienda:
                 sql = f"UPDATE t_productos SET {', '.join(updates)} WHERE id_producto = %s"
                 cursor.execute(sql, valores)
                 self.__conexion_db.get_conexion().commit()
-                print("✅ Producto actualizado.")
+                print(" Producto actualizado.")
             except Exception as e:
                 print(f"❌ Error al actualizar producto: {e}")
             finally:
@@ -108,13 +140,14 @@ class sistemaTienda:
 
     def menu(self, rol):
         while True:
-            print("\n====== MENÚ PRODUCTOS ======")
+            print("\n====== Menú de opciones para la t_productos ======")
             print("1. Mostrar productos")
             if rol == "administrador":
                 print("2. Agregar producto")
                 print("3. Editar producto")
                 print("4. Eliminar producto")
                 print("5. Crear respaldo")
+                print("6. Restaurar respaldo")
             print("0. Cerrar sesión")
             op = input("Opción: ")
 
@@ -128,8 +161,10 @@ class sistemaTienda:
                 self.__eliminar_producto()
             elif op == "5" and rol == "administrador":
                 self.__respaldo_json()
+            elif op == "6" and rol == "administrador":
+                self.__restaurar_respaldo()
             elif op == "0":
-                print("🔒 Sesión cerrada.")
+                print(" Sesión cerrada.")
                 break
             else:
                 print("❌ Opción inválida.")
@@ -139,7 +174,7 @@ def main():
     gestor = sistemaTienda()
 
     while True:
-        print("\n====== Menu de opciones del sistema ======")
+        print("\n====== Menu de login ======")
         print("1. Iniciar sesión")
         print("2. Registrar usuario")
         print("3. Finalizar sesión")
@@ -157,7 +192,7 @@ def main():
             password = input("Contraseña: ")
             login.registrar(nombre, rol, email, password)
         elif opcion == "3":
-            print("👋 Adiós.")
+            print(" Adiós.")
             break
         else:
             print("❌ Opción no válida.")
